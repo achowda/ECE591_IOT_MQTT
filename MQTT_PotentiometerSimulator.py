@@ -1,0 +1,48 @@
+'''
+Simulation of Potentiometer values obtained from a potentiometer connected to Raspberry Pi. The Potentiometer readingss will be published under the topic "THRESHOLD"
+'''
+
+import paho.mqtt.client as mqtt
+import time
+from random import randrange,uniform
+
+POTENTIOMETER_THRESHOLD = 0.9
+
+#Broker Config
+mqttBroker = "192.168.1.19"
+listernerPort = 1883
+qosValue = 2
+retainFlag = True
+
+#Simulate LDR Values
+def getPotentiometerReading():
+    randNum = uniform(0.0,1.0);
+    return randNum
+
+def on_connect(client,userdata,flags,rc):
+    print("Result from connect: {}".format(mqtt.connack_string(rc)))
+    if(rc != mqtt.CONNACK_ACCEPTED):
+        raise IOError("Couldn't establish a connection with MQTT Broker");
+
+client = mqtt.Client("POT_Reader");
+client.loop_start()
+#client.username_pw_set(username="anand",password="mqtt");
+client.connect(mqttBroker,listernerPort);
+
+
+try:
+    while True:
+        potReading = getPotentiometerReading();
+        if(potReading  >  POTENTIOMETER_THRESHOLD): 
+            client.publish(topic="THRESHOLD",payload=potReading,qos=qosValue,retain=retainFlag)
+            print("Just published " + str(potReading) + " to topic THRESHOLD")
+        time.sleep(0.1)
+
+
+except KeyboardInterrupt:
+    client.disconnect()
+    client.loop_stop()
+    print("Potentiometer disconnected");
+
+
+
