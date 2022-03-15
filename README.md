@@ -19,7 +19,9 @@ This code contains 2 MQTT publishers (Light Sensor and a Potentiometer) whose da
 
 ## Software Pre-Requisistes
   - Mosquitto MQTT Broker is used in this setup, since it is open source and easily to deploy. Mosquitto is available for download in this link - https://mosquitto.org/files/binary/win64/mosquitto-2.0.14-install-windows-x64.exe. To deploy the MQTT broker on a windows laptop, run the cmd `net start mosquitto`.
-  - Please edit the following lines in the mosquitto.conf file usually installed in location "C:\ProgramFiles\mosquitto" on a Windows PC.
+  - Please edit the following lines in the mosquitto.conf file usually installed in location * *"C:\ProgramFiles\mosquitto"* * on a Windows PC.
+    ![image](https://user-images.githubusercontent.com/99939969/158472696-d3f7a9d1-92af-476a-93a1-59d768ebde42.png)
+    **NOTE: Add exceptions in the windows firewall for port no. 1883**
   - Paho MQTT Libraries for MQTT client side code running on raspberry pi - 'pip install paho-mqtt'
 
 ## Sample Simultion Output 
