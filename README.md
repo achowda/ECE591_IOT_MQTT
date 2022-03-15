@@ -13,11 +13,15 @@ This code contains 2 MQTT publishers (Light Sensor and a Potentiometer) whose da
   - QOS value of 2 is used in this implementation. 
 
 ## Setup Block Diagram
-![image](https://user-images.githubusercontent.com/99939969/158466937-93a32e5a-5c30-4def-ab5a-247b40982880.png)
+![image](https://user-images.githubusercontent.com/99939969/158471171-325cd05c-deb0-4729-bdd9-0ef1da063f77.png)
+
+**NOTE: Sensor Interface implementation in progress. Simulated sensor data is used in the current implementation**
 
 ## Software Pre-Requisistes
+  - Mosquitto MQTT Broker is used in this setup, since it is open source and easily to deploy. Mosquitto is available for download in this link - https://mosquitto.org/files/binary/win64/mosquitto-2.0.14-install-windows-x64.exe. To deploy the MQTT broker on a windows laptop, run the cmd `net start mosquitto`.
+  - Please edit the following lines in the mosquitto.conf file usually installed in location "C:\ProgramFiles\mosquitto" on a Windows PC.
+  - Paho MQTT Libraries for MQTT client side code running on raspberry pi - 'pip install paho-mqtt'
 
-
-## Sample Output 
+## Sample Simultion Output 
 ![image](https://user-images.githubusercontent.com/99939969/158464778-84f45f37-25ed-48f6-abdb-f2ec4cd222a3.png)
 
