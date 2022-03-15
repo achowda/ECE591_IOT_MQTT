@@ -10,7 +10,7 @@ This code contains 2 MQTT publishers (Light Sensor and a Potentiometer) whose da
   - The file MQTT_LightSensorSimulator.py simulates a light sensor and publishes readings under the topic "LIGHTSENSOR" if the delta between current reading and the previous reading exceeds a constant threshold (default = 0.5).
   - The file MQTT_PotentiometerSimulator.py simulates a potentiometer and publishes readings under the topic "THRESHOLD" if the current reading exceeds a constant threshold (default = 0.9)
   - The file MQTT_Subscriber.py subscribes to the topics "LIGHTSENSOR" and "THRESHOLD". On receiving a message, prints the payload to the console.
-  - QOS value of 2 is used in this implementation. 
+  - MQTT QOS value of 2 is used in this implementation. 
 
 ## Setup Block Diagram
 ![image](https://user-images.githubusercontent.com/99939969/158471171-325cd05c-deb0-4729-bdd9-0ef1da063f77.png)
