@@ -26,12 +26,12 @@ def on_connect(client,userdata,flags,rc):
     if(rc != mqtt.CONNACK_ACCEPTED):
         raise IOError("Couldn't establish a connection with MQTT Broker");
     else:
-        client.publish("Status/Raspberrypi/LightSensor",payload="Online", qos=1, retain=True)
+        client.publish("Status/RaspberrypiA/LightSensor",payload="Online", qos=1, retain=True)
 
 client = mqtt.Client("LDR_Reader");
 client.loop_start()
 #client.username_pw_set(username="anand",password="mqtt");
-client.publish("Status/Raspberrypi/LightSensor",payload="Offline", qos=1, retain=True)
+client.publish("Status/RaspberrypiA/LightSensor",payload="Offline", qos=1, retain=True)
 client.connect(mqttBroker,listernerPort);
 
 ldrPrevReading = 0;
