@@ -5,12 +5,15 @@ A simply MQTT subscriber that subscribes to topic "TEMPERATURE" and continously 
 import paho.mqtt.client as mqtt
 import time
 
+topic1 = "RaspberrypiA/LightSensor"
+topic2 = "RaspberrypiA/Threshold"
+
 def on_connect(client, userdata, flags, rc):
     print("Result from connect: {}".format(mqtt.connack_string(rc)))
     if(rc == mqtt.CONNACK_ACCEPTED):
-        print("Subscribing to topics LIGHTSENSOR and THRESHOLD")
-        client.subscribe("LIGHTSENSOR")
-        client.subscribe("THRESHOLD")
+        print("Subscribing to topics " + topic1 + " and " + topic2)
+        client.subscribe(topic1)
+        client.subscribe(topic2)
 
 def on_message(client, userdata, message):
     print("Received message: Topic: {}. Payload: {} ".format(message.topic,str(message.payload.decode("utf-8"))))

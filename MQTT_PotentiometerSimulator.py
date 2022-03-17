@@ -13,6 +13,7 @@ mqttBroker = "192.168.1.19"
 listernerPort = 1883
 qosValue = 2
 retainFlag = True
+topicName = "RaspberrypiA/Threshold"
 
 #Simulate LDR Values
 def getPotentiometerReading():
@@ -24,12 +25,12 @@ def on_connect(client,userdata,flags,rc):
     if(rc != mqtt.CONNACK_ACCEPTED):
         raise IOError("Couldn't establish a connection with MQTT Broker");
     else:
-        client.publish("Status/RaspberrypiA/Threshold",payload="Online", qos=1, retain=True)
+        client.publish(topicName,payload="Online", qos=1, retain=True)
 
 client = mqtt.Client("POT_Reader");
 client.loop_start()
 #client.username_pw_set(username="anand",password="mqtt");
-client.publish("Status/RaspberrypiA/Threshold",payload="Offline", qos=1, retain=True)
+client.will_set(topicName,payload="Offline", qos=1, retain=True)
 client.connect(mqttBroker,listernerPort);
 
 
@@ -37,12 +38,13 @@ try:
     while True:
         potReading = getPotentiometerReading();
         if(potReading  >  POTENTIOMETER_THRESHOLD): 
-            client.publish(topic="THRESHOLD",payload=potReading,qos=qosValue,retain=retainFlag)
-            print("Just published " + str(potReading) + " to topic THRESHOLD")
+            client.publish(topic=topicName,payload=potReading,qos=qosValue,retain=retainFlag)
+            print("Just published " + str(potReading) + " to topic " + topicName)
         time.sleep(0.1)
 
 
 except KeyboardInterrupt:
+    #client.publish(topicName,payload="Offline", qos=1, retain=True)
     client.disconnect()
     client.loop_stop()
     print("Potentiometer disconnected");

@@ -13,7 +13,7 @@ mqttBroker = "192.168.1.19"
 listernerPort = 1883
 qosValue = 2
 retainFlag = True
-
+topicName = "RaspberrypiA/LightSensor"
 
 
 #Simulate LDR Values
@@ -26,12 +26,12 @@ def on_connect(client,userdata,flags,rc):
     if(rc != mqtt.CONNACK_ACCEPTED):
         raise IOError("Couldn't establish a connection with MQTT Broker");
     else:
-        client.publish("Status/RaspberrypiA/LightSensor",payload="Online", qos=1, retain=True)
+        client.publish(topicName,payload="Online", qos=1, retain=True)
 
 client = mqtt.Client("LDR_Reader");
 client.loop_start()
 #client.username_pw_set(username="anand",password="mqtt");
-client.publish("Status/RaspberrypiA/LightSensor",payload="Offline", qos=1, retain=True)
+client.will_set(topicName,payload="Offline", qos=1, retain=True)
 client.connect(mqttBroker,listernerPort);
 
 ldrPrevReading = 0;
@@ -41,13 +41,14 @@ try:
         ldrReading = getLdrReading();
         if(abs(abs(ldrReading) - abs(ldrPrevReading)) >  LIGHT_SENSOR_DELTA_THRESHOLD): 
             #client.publish(topic="LIGHTSENSOR",payload=ldrReading,qos=qosValue,retain=retainFlag)
-            client.publish("LIGHTSENSOR",ldrReading,qos=2,retain=True)
-            print("Just published " + str(ldrReading) + " to topic LIGHTSENSOR")
+            client.publish(topicName,ldrReading,qos=2,retain=True)
+            print("Just published " + str(ldrReading) + " to topic " + topicName)
         ldrPrevReading = ldrReading;
         time.sleep(0.1)
 
 
 except KeyboardInterrupt:
+    #client.publish(topicName,payload="Offline", qos=1, retain=True)
     client.disconnect()
     client.loop_stop()
     print("Light Sensor disconnected");
