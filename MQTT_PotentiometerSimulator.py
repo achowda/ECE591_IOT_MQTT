@@ -1,5 +1,5 @@
 '''
-Simulation of Potentiometer values obtained from a potentiometer connected to Raspberry Pi. The Potentiometer readingss will be published under the topic "THRESHOLD"
+Simulation of Potentiometer values obtained from a potentiometer connected to Raspberry Pi. The Potentiometer readingss will be published under the topic "RaspberrypiA/Threshold" and connection status under the topic "Status/RaspberrypiA/Threshold"
 '''
 
 import paho.mqtt.client as mqtt
@@ -14,6 +14,7 @@ listernerPort = 1883
 qosValue = 2
 retainFlag = True
 topicName = "RaspberrypiA/Threshold"
+topicStatus = "Status/RaspberrypiA/Threshold"
 
 #Simulate LDR Values
 def getPotentiometerReading():
@@ -24,30 +25,31 @@ def on_connect(client,userdata,flags,rc):
     print("Result from connect: {}".format(mqtt.connack_string(rc)))
     if(rc != mqtt.CONNACK_ACCEPTED):
         raise IOError("Couldn't establish a connection with MQTT Broker");
-    else:
-        client.publish(topicName,payload="Online", qos=1, retain=True)
 
 client = mqtt.Client("POT_Reader");
+client.on_connect = on_connect
+client.will_set(topicStatus,payload="Disconnected", qos=qosValue, retain=True)
+client.connect(mqttBroker,listernerPort)
+time.sleep(0.1)
 client.loop_start()
-#client.username_pw_set(username="anand",password="mqtt");
-client.will_set(topicName,payload="Offline", qos=1, retain=True)
-client.connect(mqttBroker,listernerPort);
-
+msgInfo = client.publish(topicStatus,payload="Online", qos=qosValue, retain=retainFlag)
+print("Just published payload = Online to topic " + topicStatus)
+cnt = 0
 
 try:
     while True:
         potReading = getPotentiometerReading();
         if(potReading  >  POTENTIOMETER_THRESHOLD): 
-            client.publish(topic=topicName,payload=potReading,qos=qosValue,retain=retainFlag)
+            msgInfo = client.publish(topic=topicName,payload=potReading,qos=qosValue,retain=retainFlag)
+            msgInfo.wait_for_publish()
             print("Just published " + str(potReading) + " to topic " + topicName)
         time.sleep(0.1)
+        cnt = cnt + 1
 
 
 except KeyboardInterrupt:
-    #client.publish(topicName,payload="Offline", qos=1, retain=True)
+    time.sleep(0.3)
     client.disconnect()
     client.loop_stop()
     print("Potentiometer disconnected");
-
-
 
