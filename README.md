@@ -7,9 +7,10 @@ This code contains 2 MQTT publishers (Light Sensor and a Potentiometer) whose da
 **In this initial commit, the light sensor readings and the potentiometer readings are simulated using the python random number generation library. This will be integrated with real sensors shortly.**
 
 ### Code Highlights
-  - The file MQTT_LightSensorSimulator.py simulates a light sensor and publishes readings under the topic "LIGHTSENSOR" if the delta between current reading and the previous reading exceeds a constant threshold (default = 0.5).
-  - The file MQTT_PotentiometerSimulator.py simulates a potentiometer and publishes readings under the topic "THRESHOLD" if the current reading exceeds a constant threshold (default = 0.9)
-  - The file MQTT_Subscriber.py subscribes to the topics "LIGHTSENSOR" and "THRESHOLD". On receiving a message, prints the payload to the console.
+  - The file MQTT_LightSensorSimulator.py simulates a light sensor and publishes readings under the topic "RaspberrypiA/LightSensor" if the delta between current reading and the previous reading exceeds a constant threshold (default = 0.5).
+  - The file MQTT_PotentiometerSimulator.py simulates a potentiometer and publishes readings under the topic "RaspberrypiA/Threshold" if the current reading exceeds a constant threshold (default = 0.9)
+  - The file MQTT_Subscriber.py subscribes to the topics "RaspberrypiA/LightSensor" and "RaspberrypiA/Threshold". On receiving a message, prints the payload to the console.
+  - The publishers also publish their status (Online / Disconnected) under the topics "Status/RaspberrypiA/LightSensor" and "Status/RaspberrypiA/Threshold"
   - MQTT QOS value of 2 is used in this implementation. 
   - The MQTT Broker running on a host PC is used in this setup. Please edit all 3 files to supply the correct MQTT Broker host address.
 
