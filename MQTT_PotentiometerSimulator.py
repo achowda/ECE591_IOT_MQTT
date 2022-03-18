@@ -32,9 +32,8 @@ client.will_set(topicStatus,payload="Disconnected", qos=qosValue, retain=True)
 client.connect(mqttBroker,listernerPort)
 time.sleep(0.1)
 client.loop_start()
-msgInfo = client.publish(topicStatus,payload="Online", qos=qosValue, retain=retainFlag)
+msgInfo = client.publish(topicStatus,payload="Online", qos=qosValue, retain=False)
 print("Just published payload = Online to topic " + topicStatus)
-cnt = 0
 
 try:
     while True:
@@ -44,7 +43,6 @@ try:
             msgInfo.wait_for_publish()
             print("Just published " + str(potReading) + " to topic " + topicName)
         time.sleep(0.1)
-        cnt = cnt + 1
 
 
 except KeyboardInterrupt:

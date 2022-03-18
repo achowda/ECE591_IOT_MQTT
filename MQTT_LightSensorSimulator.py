@@ -1,5 +1,5 @@
 '''
-Simulation of light sensor values to be acquired from an LDR. The LDR values will be published under the topic "LIGHTSENSOR"
+Simulation of light sensor values to be acquired from an LDR. The LDR values will be published under the topic "RaspberrypiA/LightSensor" and the status will be published under the topic "Status/RaspberrypiA/LightSensor"
 '''
 
 import paho.mqtt.client as mqtt
@@ -14,6 +14,7 @@ listernerPort = 1883
 qosValue = 2
 retainFlag = True
 topicName = "RaspberrypiA/LightSensor"
+topicStatus = "Status/RaspberrypiA/LightSensor"
 
 
 #Simulate LDR Values
@@ -25,14 +26,15 @@ def on_connect(client,userdata,flags,rc):
     print("Result from connect: {}".format(mqtt.connack_string(rc)))
     if(rc != mqtt.CONNACK_ACCEPTED):
         raise IOError("Couldn't establish a connection with MQTT Broker");
-    else:
-        client.publish(topicName,payload="Online", qos=1, retain=True)
 
 client = mqtt.Client("LDR_Reader");
+client.on_connect = on_connect
+client.will_set(topicStatus,payload="Disconnected", qos=qosValue, retain=True)
+client.connect(mqttBroker,listernerPort)
+time.sleep(0.1)
 client.loop_start()
-#client.username_pw_set(username="anand",password="mqtt");
-client.will_set(topicName,payload="Offline", qos=1, retain=True)
-client.connect(mqttBroker,listernerPort);
+client.publish(topicStatus,payload="Online", qos=qosValue, retain=False)
+print("Just published payload = Online to topic " + topicStatus)
 
 ldrPrevReading = 0;
 
@@ -40,15 +42,15 @@ try:
     while True:
         ldrReading = getLdrReading();
         if(abs(abs(ldrReading) - abs(ldrPrevReading)) >  LIGHT_SENSOR_DELTA_THRESHOLD): 
-            #client.publish(topic="LIGHTSENSOR",payload=ldrReading,qos=qosValue,retain=retainFlag)
-            client.publish(topicName,ldrReading,qos=2,retain=True)
+            msgInfo = client.publish(topicName,ldrReading,qos=qosValue,retain=retainFlag)
+            msgInfo.wait_for_publish()
             print("Just published " + str(ldrReading) + " to topic " + topicName)
         ldrPrevReading = ldrReading;
         time.sleep(0.1)
 
 
 except KeyboardInterrupt:
-    #client.publish(topicName,payload="Offline", qos=1, retain=True)
+    time.sleep(0.3)
     client.disconnect()
     client.loop_stop()
     print("Light Sensor disconnected");
