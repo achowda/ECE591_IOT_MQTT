@@ -1,3 +1,5 @@
+from spidev import SpiDev
+
 class MCP3008:
     def __init__(self, bus = 0, device = 0):
         self.bus, self.device = bus, device
