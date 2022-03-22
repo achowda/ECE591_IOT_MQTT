@@ -8,8 +8,8 @@ threshold = 0.2
 
 
 #broker = "192.168.0.179"
-#broker = "192.168.43.115"
-broker = "10.2.1.225"
+broker = "192.168.43.115"
+#broker = "10.2.1.225"
 port = 1883
 client_id = "A"
 topic = ["lightSensor", "threshold"]
@@ -32,11 +32,10 @@ def checkSensor(client):
     curPoten = potentiometer()
     
     #print("LDR: ", curLdr, "  Potentiometer: ", curPoten)
-    
     if abs(curLdr - preLdr) >= threshold or abs(curPoten - prePoten) >= threshold:
         print("LDR: ", curLdr, "  Potentiometer: ", curPoten)
-        client.publish(topic[0], payload=str(curLdr), qos=2)
-        client.publish(topic[1], payload=str(curPoten), qos=2)
+        client.publish(topic[0], payload=str(curLdr), qos=2, retain=True)
+        client.publish(topic[1], payload=str(curPoten), qos=2, retain=True)
         print("publish lightSensor & threshold")
         preLdr = curLdr
         prePoten = curPoten
@@ -49,20 +48,18 @@ def on_connect(client, userdata, flags, rc):
         print("subscribe")
         client.publish("Status/RaspberryPiA", "online", 2, True)
         print("publish online")
-        
-        while True:
-            try:
-                checkSensor(client)
-                time.sleep(0.1)
-            except KeyboardInterrupt:
-                client.disconnect()
-                break
     else:
         print("Failed to connect, return code %d\n", rc)
 
 def on_message(client, userdate, msg):
+    global preLdr
+    global prePoten
     print(msg.topic, ": ", msg.payload.decode("ascii"))
-    #checkSensor(client)
+    if msg.retain == 1:
+        if msg.topic == topic[0]:
+            preLdr = float(msg.payload.decode("ascii"))
+        elif msg.topic == topic[1]:
+            prePoten = float(msg.payload.decode("ascii"))
     
 
 def on_disconnect(client, userdata, rc):
@@ -78,9 +75,16 @@ def connect():
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.on_message = on_message
-    client.connect(broker, port)
-    client.loop_forever()
-    
+    client.connect(host=broker, port=port, keepalive=10)
+    while True:
+        try:
+            client.loop_start()
+            checkSensor(client)
+            time.sleep(0.1)
+            client.loop_stop()
+        except KeyboardInterrupt:
+            client.disconnect()
+            break    
 
 if __name__ == '__main__':
     connect()
