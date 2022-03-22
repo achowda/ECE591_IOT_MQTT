@@ -2,9 +2,9 @@ from gpiozero import MCP3008
 import time
 from paho.mqtt import client as mqtt
 
-threshold = 0.4
-preLdr = 0
-prePoten = 0
+threshold = 0.2
+#preLdr = 0
+#prePoten = 0
 
 
 #broker = "192.168.0.179"
@@ -22,11 +22,16 @@ def potentiometer():
     poten = MCP3008(1)
     return(poten.value)
 
+preLdr = ldr()
+prePoten = potentiometer()
+
 def checkSensor(client):
+    global preLdr
+    global prePoten
     curLdr = ldr()
     curPoten = potentiometer()
     
-    print("LDR: ", curLdr, "  Potentiometer: ", curPoten)
+    #print("LDR: ", curLdr, "  Potentiometer: ", curPoten)
     
     if abs(curLdr - preLdr) >= threshold or abs(curPoten - prePoten) >= threshold:
         print("LDR: ", curLdr, "  Potentiometer: ", curPoten)
@@ -35,7 +40,7 @@ def checkSensor(client):
         print("publish lightSensor & threshold")
         preLdr = curLdr
         prePoten = curPoten
-
+    
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT Broker!")        
