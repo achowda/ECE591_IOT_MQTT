@@ -9,10 +9,9 @@ It creates a log file which keeps a record of each incoming message along with t
   - Use the package manager pip to install Paho MQTT Libraries.
 ```bash
 pip install paho-mqtt
-
- - Edit the mqttBroker ip address on line 36 to be the ip address of the MQTT broker running on laptop #1.
- 
 ```
+  - Edit the mqttBroker ip address on line 36 to be the ip address of the MQTT broker running on laptop #1.
+ 
   - You may execute this code from the command line.
 ```bash
 python Laptop2_Subscriber.py
