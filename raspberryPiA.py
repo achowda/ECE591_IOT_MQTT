@@ -83,6 +83,7 @@ def connect():
             time.sleep(0.1)
             client.loop_stop()
         except KeyboardInterrupt:
+            client.publish("Status/RaspberryPiA", "offline", 2, True)
             client.disconnect()
             break    
 

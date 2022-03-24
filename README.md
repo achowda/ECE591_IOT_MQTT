@@ -1,6 +1,12 @@
 # ECE591_IOT_MQTT
 Implements a raspberry pi based MQTT publisher and subscriber.
 
+## Execution description
+Run the raspberryPiA.py on raspberry pi A.
+When the LDR detects light changes than default threshold(0.2) or the potentiometer has change larger than threshold, it will publish the values of LDR and potentiometer to the broker.
+When the KeyboardInterrupt happens, the raspberry pi A will disconnect gracefully after publish "offline" to the broker.
+If the raspberry pi A disconnect disgracefully, the last will message that contains "offline" will still be sent to other subscribers.
+
 ## Description
 This code contains 2 MQTT publishers (Light Sensor and a Potentiometer) whose data is refreshed every 100ms and published if the readings exceed certain threshold. This code base also contains a MQTT subscriber that subscribes to the light sensor and hte potentiometer topics.
 
